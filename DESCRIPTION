@@ -1,4 +1,4 @@
-Package: ices
+Package: icesHackathon2018G3
 Title: A QC Tool for Length-Weight Distribution
 Version: 0.0.0.9000
 Authors@R: c(person("Nissa", "Ferm", email = "nissa.ferm@noaa.gov", role = c("aut", "cre")),
@@ -6,7 +6,9 @@ Authors@R: c(person("Nissa", "Ferm", email = "nissa.ferm@noaa.gov", role = c("au
              person("Ibrahim", "Umar", email = "ibrahim.umar@hi.no", role = c("aut")))
 Description: A QC Tool for Length-Weight Distribution, more to come.
 Depends: R (>= 3.4.4)
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
+Imports:
+    shiny
