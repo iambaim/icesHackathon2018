@@ -53,9 +53,20 @@ getCurrentStation <- function(year, haul) {
 
 Brush_densityplot <- function(This_year, Fish_choice, Last_haul, fish_data){
 
+  if(length(Last_haul)==0) return(NULL)
+ 
   print(This_year)
   print(Fish_choice)
-  print(Last_haul)
+
+  print(paste("ALast haul:", Last_haul))
+
+  # Find the nearest hauls
+  #xp <- unique(unlist(fish_data[fish_data$Year==This_year, "HaulNo"]))
+  #if(Last_haul < min(xp)) Last_haul <- min(xp)
+  #else if(Last_haul > max(xp)) Last_haul <- max(xp)
+  #else Last_haul <- which.min(abs(xp - as.integer(Last_haul))) 
+  
+  print(paste("BLast haul:", Last_haul))
 
   Current_Station <- getCurrentStation(This_year, Last_haul)
 
@@ -77,7 +88,7 @@ density_curr <- as.data.frame(rep(density_curr$LngtClass, density_curr$HLNoAtLng
 colnames(density_curr) <- "den_curr"
 
 
-return(ggplot()+
+ggplot()+
   #historical density distribution for selected or last station
   geom_density(aes(x = den_hist),color = Hist_color, size = 2,data = density_histor )+
   #current density distribution for selected or last station 
@@ -85,18 +96,18 @@ return(ggplot()+
                  alpha = 0.6, data = density_curr)+
   xlab(label = "Length Class (mm)")+
   theme_bw()
-  )
+
 
 }
 
-K_plot <- function(fish_data, Fish_choice, This_year,Button_choice){
+K_plot <- function(fish_data, Fish_choice, This_year, Button_choice){
 #In the future this is where the AB table would be linked
 A <- -5.446 # intercept
 B <- 3.1818 #slope of the fit
 
 #Calculates the estimated wieght for fish
 fish_stats <- fish_data %>%
-  filter(SpecCodeType == Fish_choice)%>%
+  filter(SpecCode == Fish_choice)%>%
   mutate(Pred_Wt = HLNoAtLngt * (exp(A)*(LngtClass/10)^B))%>%
   group_by(Year,HaulNo,CatIdentifier)%>%
   summarise(K = sum(Pred_Wt) - mean(SubWgt),
@@ -118,11 +129,11 @@ ggplot()+
   geom_point(aes(x = HaulNo, y = K, size = Num_fish),shape = 21,
              alpha = 0.5,color = Hist_color,fill = Hist_color,
              data = fish_stats %>% filter(Year == This_year)%>%
-               filter(HaulNo != Button_choice))+
+               filter(!HaulNo %in% Button_choice))+
   geom_point(aes(x = HaulNo, y = K, size = Num_fish),shape = 21,
              alpha = 0.9, color = Current_color,fill = Current_color,
              data = fish_stats %>% filter(Year == This_year) %>%
-               filter(HaulNo == Button_choice))+
+               filter(HaulNo %in% Button_choice))+
   scale_size_continuous(range = c(0.5,16), breaks = seq(0,max(fish_stats$Num_fish),
                                                       by = 100),
                         name = "Fish (n)")+

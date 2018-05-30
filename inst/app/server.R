@@ -8,10 +8,10 @@ server <- function(input, output) {
   }
   # Radio button for the type of haul subset
   output$choose_haulSubset <- renderUI({
-       radioButtons("haulSubset", "Choose one:",
+       radioButtons("haulSubset", "Highlight:",
                choiceNames = list(
                  "Last haul",
-                 "All hauls"
+                 "All hauls (Stand in for 24 hours)"
                ),
                choiceValues = list(
                  "last", "all"
@@ -31,10 +31,16 @@ server <- function(input, output) {
   
   # Define for the plots
   output$plot_main <- renderPlot({
-    Brush_densityplot(maxYear, input$species, getHaulList(input[["haulSubset"]]), parsedData)
+    #Brush_densityplot(maxYear, input$species, getHaulList(input[["haulSubset"]]), parsedData)
+    K_plot(parsedData, input$species, maxYear, getHaulList(input[["haulSubset"]]))
   })
 
   # Define for the sub-plots on-hover
+  output$plot_sub <- renderPlot({
+    Brush_densityplot(maxYear, input$species, round(input$plot_click$x), parsedData)
+    #K_plot(parsedData, input$species, maxYear, getHaulList(input[["haulSubset"]]))
+  })
+
   output$info <- renderText({
     xy_str <- function(e) {
       if(is.null(e)) return("NULL\n")
@@ -48,9 +54,7 @@ server <- function(input, output) {
 
     paste0(
       "click: ", xy_str(input$plot_click),
-      "dblclick: ", xy_str(input$plot_dblclick),
-      "hover: ", xy_str(input$plot_hover),
-      "brush: ", xy_range_str(input$plot_brush)
+      "Haul selected:", round(input$plot_click$x)
     )
   })
 
