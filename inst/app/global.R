@@ -88,3 +88,51 @@ return(ggplot()+
   )
 
 }
+
+K_plot <- function(fish_data, Fish_choice, This_year,Button_choice){
+#In the future this is where the AB table would be linked
+A <- -5.446 # intercept
+B <- 3.1818 #slope of the fit
+
+#Calculates the estimated wieght for fish
+fish_stats <- fish_data %>%
+  filter(SpecCodeType == Fish_choice)%>%
+  mutate(Pred_Wt = HLNoAtLngt * (exp(A)*(LngtClass/10)^B))%>%
+  group_by(Year,HaulNo,CatIdentifier)%>%
+  summarise(K = sum(Pred_Wt) - mean(SubWgt),
+            Num_fish = sum(HLNoAtLngt)) 
+
+fish_stat <- fish_stats %>% filter(Year != This_year)  
+
+fish_mean <- mean(fish_stat$K,na.rm = TRUE)
+
+fish_CI <- sd(fish_stat$K, na.rm = TRUE)
+
+#Plot
+ggplot()+
+  geom_hline(aes(yintercept = fish_mean), color = "red", size = 2, alpha = 0.6)+
+  geom_hline(aes(yintercept = fish_mean - fish_CI),
+             color = "red", size = 2, alpha = 0.6, linetype = "dotted")+
+  geom_hline(aes(yintercept = fish_mean + fish_CI),
+             color = "red", size = 2, alpha = 0.6, linetype = "dotted")+
+  geom_point(aes(x = HaulNo, y = K, size = Num_fish),shape = 21,
+             alpha = 0.5,color = Hist_color,fill = Hist_color,
+             data = fish_stats %>% filter(Year == This_year)%>%
+               filter(HaulNo != Button_choice))+
+  geom_point(aes(x = HaulNo, y = K, size = Num_fish),shape = 21,
+             alpha = 0.9, color = Current_color,fill = Current_color,
+             data = fish_stats %>% filter(Year == This_year) %>%
+               filter(HaulNo == Button_choice))+
+  scale_size_continuous(range = c(0.5,16), breaks = seq(0,max(fish_stats$Num_fish),
+                                                      by = 100),
+                        name = "Fish (n)")+
+  xlab(label = "Haul No")+
+  theme_bw()+
+  theme(axis.text = element_text(size = 14, color = "black"),
+        axis.title = element_text(size = 14, color = "black"),
+        legend.text = element_text(size = 14, color = "black"),
+        legend.title = element_text(size = 14, color = "black"))
+
+
+}
+
