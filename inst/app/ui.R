@@ -11,7 +11,15 @@ ui <- fluidPage(
       uiOutput("list_hauls") 
     ),
     mainPanel(
-      titlePanel("Main Panel")
+      titlePanel("Main Panel"),
+      # Main Plot
+      plotOutput("plot_main",
+        click = "plot_click",
+        dblclick = "plot_dblclick",
+        hover = "plot_hover",
+        brush = "plot_brush"
+      ),
+      verbatimTextOutput("info")
     )
   )
 )
