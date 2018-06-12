@@ -30,15 +30,15 @@ server <- function(input, output) {
   })
   
   # Define for the plots
-  output$plot_main <- renderPlot({
-    #Brush_densityplot(maxYear, input$species, getHaulList(input[["haulSubset"]]), parsedData)
-    K_plot(parsedData, input$species, maxYear, getHaulList(input[["haulSubset"]]))
+  output$plot_main <- renderPlotly({
+    ggplotly(K_plot(parsedData, input$species, maxYear, getHaulList(input[["haulSubset"]])))
   })
 
   # Define for the sub-plots on-hover
   output$plot_sub <- renderPlot({
-    Brush_densityplot(maxYear, input$species, round(input$plot_click$x), parsedData)
-    #K_plot(parsedData, input$species, maxYear, getHaulList(input[["haulSubset"]]))
+    d <- event_data("plotly_hover")
+    if (!is.null(d))
+        Brush_densityplot(maxYear, input$species, d$x, parsedData)
   })
 
   output$info <- renderText({
@@ -52,10 +52,14 @@ server <- function(input, output) {
              " ymin=", round(e$ymin, 1), " ymax=", round(e$ymax, 1))
     }
 
-    paste0(
-      "click: ", xy_str(input$plot_click),
-      "Haul selected:", round(input$plot_click$x)
-    )
+    d <- event_data("plotly_hover")
+    if(!is.null(d))
+     paste0(
+        "Hover status: ", xy_str(d),
+        "Haul selected:", d$x
+     )
+    else
+	"Please hover on a point"
   })
 
 

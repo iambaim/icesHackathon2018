@@ -88,7 +88,7 @@ density_curr <- as.data.frame(rep(density_curr$LngtClass, density_curr$HLNoAtLng
 colnames(density_curr) <- "den_curr"
 
 
-ggplot()+
+plotOut <- ggplot()+
   #historical density distribution for selected or last station
   geom_density(aes(x = den_hist),color = Hist_color, size = 2,data = density_histor )+
   #current density distribution for selected or last station 
@@ -97,6 +97,7 @@ ggplot()+
   xlab(label = "Length Class (mm)")+
   theme_bw()
 
+return(plotOut)
 
 }
 
@@ -120,7 +121,7 @@ fish_mean <- mean(fish_stat$K,na.rm = TRUE)
 fish_CI <- sd(fish_stat$K, na.rm = TRUE)
 
 #Plot
-ggplot()+
+plotOut <- ggplot()+
   geom_hline(aes(yintercept = fish_mean), color = "red", size = 2, alpha = 0.6)+
   geom_hline(aes(yintercept = fish_mean - fish_CI),
              color = "red", size = 2, alpha = 0.6, linetype = "dotted")+
@@ -143,7 +144,7 @@ ggplot()+
         axis.title = element_text(size = 14, color = "black"),
         legend.text = element_text(size = 14, color = "black"),
         legend.title = element_text(size = 14, color = "black"))
-
+return(plotOut)
 
 }
 

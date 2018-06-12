@@ -9,6 +9,7 @@
 #' @import tidyr
 #' @import scales
 #' @import magrittr
+#' @import plotly
 #'
 #' @examples
 #' \dontrun{

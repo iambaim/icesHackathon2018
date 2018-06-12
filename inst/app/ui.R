@@ -16,12 +16,7 @@ ui <- fluidPage(
     mainPanel(
       titlePanel("Main Panel"),
       # Main Plot
-      plotOutput("plot_main",
-        click = "plot_click",
-        dblclick = "plot_dblclick",
-        hover = "plot_hover",
-        brush = "plot_brush"
-      ),
+      plotlyOutput("plot_main"),
       plotOutput("plot_sub"),
       verbatimTextOutput("info")
     )
